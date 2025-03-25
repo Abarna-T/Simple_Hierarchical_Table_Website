@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Row = ({ row, updateValue, level = 0 }) => {
   const [inputValue, setInputValue] = useState(""); // For percentage/absolute input
   const [editValue, setEditValue] = useState(row.value); // For inline editing
   const [isEditing, setIsEditing] = useState(false); // Track edit mode
 
+  // Sync editValue when row.value changes
+  useEffect(() => {
+    setEditValue(row.value);
+  }, [row.value]);
+
   // Handle percentage-based updates
   const handlePercentageUpdate = () => {
     const percentage = parseFloat(inputValue);
     if (!isNaN(percentage)) {
       updateValue(row.id, percentage);
+      setInputValue(""); // Clear input after update
     }
   };
 
@@ -18,9 +24,9 @@ const Row = ({ row, updateValue, level = 0 }) => {
     const newValue = parseFloat(inputValue);
     if (!isNaN(newValue)) {
       updateValue(row.id, newValue, true); // Direct update for parent or child
+      setInputValue(""); // Clear input after update
     }
   };
-  
 
   // Handle inline value editing
   const handleEditChange = (e) => {
